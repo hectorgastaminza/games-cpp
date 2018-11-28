@@ -1,5 +1,4 @@
 // Include important C++ libraries here
-#include "stdafx.h"
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -12,13 +11,13 @@ void updateBranches(int seed);
 const int NUM_BRANCHES = 6;
 Sprite branches[NUM_BRANCHES];
 
-// Where is the player/branch? 
+// Where is the player/branch?
 // Left or Right
 enum class side { LEFT, RIGHT, NONE };
 side branchPositions[NUM_BRANCHES];
 
 
-int main()
+int main_lr()
 {
 	// Create a video mode object
 	// VideoMode vm(1920, 1080);

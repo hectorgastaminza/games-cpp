@@ -1,5 +1,4 @@
 // Include important C++ libraries here
-#include "stdafx.h"
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -21,16 +20,23 @@ side branchPositions[NUM_BRANCHES];
 int main()
 {
 	// Create a video mode object
-	VideoMode vm(1920, 1080);
+	VideoMode vm = VideoMode::getFullscreenModes()[0];
+	if(vm.isValid() == false)
+	{
+		vm = VideoMode(1920, 1080);
+	}
 
 	// Create and open a window for the game
-	RenderWindow window(vm, "Timber!!!", Style::Fullscreen);
+	RenderWindow window(vm, "Timber!!!", Style::Default);
+	// Low res code
+	View view(sf::FloatRect(0, 0, 1920, 1080));
+	window.setView(view);
 
 	// Create a texture to hold a graphic on the GPU
 	Texture textureBackground;
 
 	// Load a graphic into the texture
-	textureBackground.loadFromFile("graphics/background.png");
+	textureBackground.loadFromFile("resources/graphics/background.png");
 
 	// Create a sprite
 	Sprite spriteBackground;
@@ -43,14 +49,14 @@ int main()
 
 	// Make a tree sprite
 	Texture textureTree;
-	textureTree.loadFromFile("graphics/tree.png");
+	textureTree.loadFromFile("resources/graphics/tree.png");
 	Sprite spriteTree;
 	spriteTree.setTexture(textureTree);
 	spriteTree.setPosition(810, 0);
 
 	// Enhanced version
 	Texture textureTree2;
-	textureTree2.loadFromFile("graphics/tree2.png");
+	textureTree2.loadFromFile("resources/graphics/tree2.png");
 	Sprite spriteTree2;
 	spriteTree2.setTexture(textureTree2);
 	Sprite spriteTree3;
@@ -71,7 +77,7 @@ int main()
 
 	// Prepare the bee
 	Texture textureBee;
-	textureBee.loadFromFile("graphics/bee.png");
+	textureBee.loadFromFile("resources/graphics/bee.png");
 	Sprite spriteBee;
 	spriteBee.setTexture(textureBee);
 	spriteBee.setPosition(0, 800);
@@ -86,7 +92,7 @@ int main()
 	Texture textureCloud;
 
 	// Load 1 new texture
-	textureCloud.loadFromFile("graphics/cloud.png");
+	textureCloud.loadFromFile("resources/graphics/cloud.png");
 
 	// Make the clouds with arrays
 	const int NUM_CLOUDS = 6;
@@ -151,7 +157,7 @@ int main()
 
 	// We need to choose a font
 	Font font;
-	font.loadFromFile("fonts/KOMIKAP_.ttf");
+	font.loadFromFile("resources/fonts/KOMIKAP_.ttf");
 
 	// Set the font to our message
 	messageText.setFont(font);
@@ -201,7 +207,7 @@ int main()
 
 	// Prepare 5 branches
 	Texture textureBranch;
-	textureBranch.loadFromFile("graphics/branch.png");
+	textureBranch.loadFromFile("resources/graphics/branch.png");
 
 	// Set the texture for each branch sprite
 	for (int i = 0; i < NUM_BRANCHES; i++) {
@@ -215,7 +221,7 @@ int main()
 
 	// Prepare the player
 	Texture texturePlayer;
-	texturePlayer.loadFromFile("graphics/player.png");
+	texturePlayer.loadFromFile("resources/graphics/player.png");
 	Sprite spritePlayer;
 	spritePlayer.setTexture(texturePlayer);
 	spritePlayer.setPosition(580, 720);
@@ -225,14 +231,14 @@ int main()
 
 	// Prepare the gravestone
 	Texture textureRIP;
-	textureRIP.loadFromFile("graphics/rip.png");
+	textureRIP.loadFromFile("resources/graphics/rip.png");
 	Sprite spriteRIP;
 	spriteRIP.setTexture(textureRIP);
 	spriteRIP.setPosition(600, 860);
 
 	// Prepare the axe
 	Texture textureAxe;
-	textureAxe.loadFromFile("graphics/axe.png");
+	textureAxe.loadFromFile("resources/graphics/axe.png");
 	Sprite spriteAxe;
 	spriteAxe.setTexture(textureAxe);
 	spriteAxe.setPosition(700, 830);
@@ -243,7 +249,7 @@ int main()
 
 	// Prepare the flying log
 	Texture textureLog;
-	textureLog.loadFromFile("graphics/log.png");
+	textureLog.loadFromFile("resources/graphics/log.png");
 	Sprite spriteLog;
 	spriteLog.setTexture(textureLog);
 	spriteLog.setPosition(810, 720);
@@ -258,18 +264,18 @@ int main()
 
 	// Prepare the sound
 	SoundBuffer chopBuffer;
-	chopBuffer.loadFromFile("sound/chop.wav");
+	chopBuffer.loadFromFile("resources/sound/chop.wav");
 	Sound chop;
 	chop.setBuffer(chopBuffer);
 
 	SoundBuffer deathBuffer;
-	deathBuffer.loadFromFile("sound/death.wav");
+	deathBuffer.loadFromFile("resources/sound/death.wav");
 	Sound death;
 	death.setBuffer(deathBuffer);
 
 	// Out of time
 	SoundBuffer ootBuffer;
-	ootBuffer.loadFromFile("sound/out_of_time.wav");
+	ootBuffer.loadFromFile("resources/sound/out_of_time.wav");
 	Sound outOfTime;
 	outOfTime.setBuffer(ootBuffer);
 
