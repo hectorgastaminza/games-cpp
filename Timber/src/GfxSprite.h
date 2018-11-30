@@ -10,12 +10,12 @@
 
 #include <SFML/Graphics.hpp>
 
-class gfxSprite {
+class GfxSprite {
 public:
-	gfxSprite();
-	gfxSprite(const std::string& imgFile);
-	gfxSprite(const sf::Texture & texture);
-	virtual ~gfxSprite();
+	GfxSprite();
+	GfxSprite(const std::string& imgFile);
+	GfxSprite(const sf::Texture & texture);
+	virtual ~GfxSprite();
 	void setPosition(float x, float y);
 	void setOrigin(float x, float y);
 	void setRotation(float angle);
