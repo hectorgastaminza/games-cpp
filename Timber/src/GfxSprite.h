@@ -9,23 +9,24 @@
 #define SRC_GFXSPRITE_H_
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 class GfxSprite {
 public:
 	GfxSprite();
 	GfxSprite(const std::string& imgFile);
-	GfxSprite(const sf::Texture & texture);
+	GfxSprite(std::shared_ptr<sf::Texture> texture);
 	virtual ~GfxSprite();
 	void setPosition(float x, float y);
 	void setOrigin(float x, float y);
 	void setRotation(float angle);
-	const sf::Texture & getTexture();
+	const std::shared_ptr<sf::Texture> getTexture();
 	const sf::Vector2f& getPosition() const;
 	sf::Sprite & getSprite();
+	sf::Sprite _sprite;
 private:
 	// Create a texture to hold a graphic on the GPU
-	sf::Texture _texture;
-	sf::Sprite _sprite;
+	std::shared_ptr<sf::Texture> _ptrTexture;
 };
 
 #endif /* SRC_GFXSPRITE_H_ */

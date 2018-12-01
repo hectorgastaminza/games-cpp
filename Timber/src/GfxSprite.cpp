@@ -13,17 +13,18 @@ GfxSprite::GfxSprite()
 
 GfxSprite::GfxSprite(const std::string& imgFile)
 {
+	_ptrTexture = std::make_shared<sf::Texture>();
 	// Load a graphic into the texture
-	_texture.loadFromFile(imgFile);
+	_ptrTexture->loadFromFile(imgFile);
 	// Attach the texture to the sprite
-	_sprite.setTexture(_texture);
+	_sprite.setTexture(*_ptrTexture);
 }
 
-GfxSprite::GfxSprite(const sf::Texture & texture)
+GfxSprite::GfxSprite(std::shared_ptr<sf::Texture> texture)
 {
-	_texture = texture;
+	_ptrTexture = texture;
 	// Attach the texture to the sprite
-	_sprite.setTexture(_texture);
+	_sprite.setTexture(*_ptrTexture);
 }
 
 GfxSprite::~GfxSprite() {
@@ -46,9 +47,9 @@ void GfxSprite::setRotation(float angle)
 	_sprite.setRotation(angle);
 }
 
-const sf::Texture & GfxSprite::getTexture()
+const std::shared_ptr<sf::Texture> GfxSprite::getTexture()
 {
-	return _texture;
+	return _ptrTexture;
 }
 
 const sf::Vector2f& GfxSprite::getPosition() const
@@ -60,4 +61,3 @@ sf::Sprite & GfxSprite::getSprite()
 {
 	return _sprite;
 }
-
