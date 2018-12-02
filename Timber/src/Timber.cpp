@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include "GfxSprite.h"
 #include "GfxWindow.h"
+#include "GfxTextbox.h"
 
 // Make code easier to type with "using namespace"
 using namespace sf;
@@ -22,13 +23,19 @@ side branchPositions[NUM_BRANCHES];
 // Line the axe up with the tree
 const float AXE_POSITION_LEFT = 850;
 const float AXE_POSITION_RIGHT = 1075;
-const float OUT_SCREEN_X = 2000;
-
+const float SCREEN_WIDTH = 1920;
+const float SCREEN_HEIGHT = 1080;
+const float OUT_SCREEN_X = 2200;
+const float INFO_POS_Y = SCREEN_HEIGHT - 120;
+const float FPS_WIDTH = 300;
+const float FPS_HEIGHT = 50;
+const float SCORE_WIDTH = 600;
+const float SCORE_HEIGHT = 80;
 
 int main()
 {
 	// Create a video mode object
-	GfxWindow _window("Timber!!!", 1920, 1080);
+	GfxWindow _window("Timber!!!", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Create background
 	GfxSprite spriteBackground("resources/graphics/background.png");
@@ -97,35 +104,50 @@ int main()
 
 	// Prepare the player
 	GfxSprite spritePlayer("resources/graphics/player.png");
-	spritePlayer.setPosition(580, 720);
+	spritePlayer.setPosition(OUT_SCREEN_X, 720);
 	_window.addSprite(spritePlayer);
 
 	// Prepare the axe
 	GfxSprite spriteAxe("resources/graphics/axe.png");
-	spriteAxe.setPosition(700, 830);
+	spriteAxe.setPosition(OUT_SCREEN_X, 830);
 	_window.addSprite(spriteAxe);
 
 	// Prepare the gravestone
 	GfxSprite spriteRIP("resources/graphics/rip.png");
-	spriteRIP.setPosition(600, 750);
+	spriteRIP.setPosition(OUT_SCREEN_X, 750);
 	_window.addSprite(spriteRIP);
 
 	// Prepare the flying log
 	GfxSprite spriteLog("resources/graphics/log.png");
-	spriteLog.setPosition(810, 720);
+	spriteLog.setPosition(OUT_SCREEN_X, 720);
 	_window.addSprite(spriteLog);
 
+	// Prepare FPS information
+	GfxTextbox textboxFps(sf::Vector2f(FPS_WIDTH,FPS_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 20);
+	textboxFps.setForeColor(sf::Color::Magenta);
+	textboxFps.setBackColor(sf::Color(0, 0, 0, 150));
+	textboxFps.setPosition(SCREEN_WIDTH - FPS_WIDTH - 50, INFO_POS_Y);
+	_window.addSprite(&textboxFps);
 
+	// Prepare Score Information
+	GfxTextbox textboxScore(sf::Vector2f(SCORE_WIDTH, SCORE_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 60);
+	textboxScore.setForeColor(sf::Color::Yellow);
+	textboxScore.setBackColor(sf::Color(0, 0, 0, 150));
+	textboxScore.setPosition(50, INFO_POS_Y);
+	_window.addSprite(&textboxScore);
 
-
-
-
+	// Prepare Game Information popup
+	GfxTextbox textboxPopup(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 140);
+	textboxPopup.setForeColor(sf::Color::Cyan);
+	textboxPopup.setBackColor(sf::Color(0, 0, 0, 150));
+	textboxPopup.setPosition(0, 0);
+	textboxPopup.enableBackground(false);
+	textboxPopup.hide(true);
+	_window.addSprite(&textboxPopup);
 
 
 	// The player starts on the left
 	side playerSide = side::LEFT;
-
-
 
 	// Is the bee currently moving?
 	bool beeActive = false;
@@ -143,7 +165,7 @@ int main()
 	float timeBarHeight = 80;
 	timeBar.setSize(Vector2f(timeBarStartWidth, timeBarHeight));
 	timeBar.setFillColor(Color::Red);
-	timeBar.setPosition((1920 / 2) - timeBarStartWidth / 2, 980);
+	timeBar.setPosition((SCREEN_WIDTH / 2) - timeBarStartWidth / 2, INFO_POS_Y);
 
 	Time gameTimeTotal;
 	float timeRemaining = 6.0f;
@@ -153,60 +175,6 @@ int main()
 	bool paused = true;
 	// Draw some text
 	int score = 0;
-
-	Text messageText;
-	Text scoreText;
-	Text fpsText;
-
-	// We need to choose a font
-	Font font;
-	font.loadFromFile("resources/fonts/KOMIKAP_.ttf");
-
-	// Set the font to our message
-	messageText.setFont(font);
-	scoreText.setFont(font);
-	fpsText.setFont(font);
-	
-
-	// Set up the fps text
-	fpsText.setFillColor(Color::White);
-	fpsText.setCharacterSize(100);
-	fpsText.setPosition(1200, 20);
-
-	// Assign the actual message
-	messageText.setString("Press Enter to start!");
-	scoreText.setString("Score = 0");
-
-	// Make it really big
-	messageText.setCharacterSize(75);
-	scoreText.setCharacterSize(100);
-
-	// Choose a color
-	messageText.setFillColor(Color::White);
-	scoreText.setFillColor(Color::White);
-
-	// Position the text
-	FloatRect textRect = messageText.getLocalBounds();
-
-	messageText.setOrigin(textRect.left +
-		textRect.width / 2.0f,
-		textRect.top +
-		textRect.height / 2.0f);
-
-	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
-
-	scoreText.setPosition(20, 20);
-
-	// Backgrounds for the text
-	RectangleShape rect1;
-	rect1.setFillColor(sf::Color(0, 0, 0, 150));
-	rect1.setSize(Vector2f(600,105));
-	rect1.setPosition(0,30);
-
-	RectangleShape rect2;
-	rect2.setFillColor(sf::Color(0, 0, 0, 150));
-	rect2.setSize(Vector2f(1000, 105));
-	rect2.setPosition(1150, 30);
 
 	// Some other useful log related variables
 	bool logActive = false;
@@ -269,6 +237,9 @@ int main()
 		{
 			paused = false;
 
+			// hide popup message
+			textboxPopup.hide(true);
+
 			// Reset the time and the score
 			score = 0;
 			timeRemaining = 6;
@@ -322,7 +293,6 @@ int main()
 
 				// Play a chop sound
 				//chop.play();
-
 			}
 
 			// Handle the left cursor key
@@ -340,7 +310,6 @@ int main()
 					spriteAxe.getPosition().y);
 				spriteAxe.setRotation(180);
 
-
 				spritePlayer.setPosition(580, 720);
 
 				// update the branches
@@ -356,12 +325,8 @@ int main()
 
 				// Play a chop sound
 				//chop.play();
-
 			}
-
-
 		}
-
 
 		/*
 		****************************************
@@ -380,35 +345,23 @@ int main()
 			timeBar.setSize(Vector2f(timeBarWidthPerSecond *
 				timeRemaining, timeBarHeight));
 
-
 			if (timeRemaining <= 0.0f) {
 
 				// Pause the game
 				paused = true;
 
 				// Change the message shown to the player
-				messageText.setString("Out of time!!");
-
-				//Reposition the text based on its new size
-				FloatRect textRect = messageText.getLocalBounds();
-				messageText.setOrigin(textRect.left +
-					textRect.width / 2.0f,
-					textRect.top +
-					textRect.height / 2.0f);
-
-				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+				textboxPopup.setText("Out of time!!");
+				textboxPopup.hide(false);
 
 				// Play the out of time sound
 				//outOfTime.play();
-
-
 			}
 
 
 			// Setup the bee
 			if (!beeActive)
 			{
-
 				// How fast is the bee
 				srand((int)time(0) * 10);
 				beeSpeed = (rand() % 200) + 200;
@@ -418,12 +371,10 @@ int main()
 				float height = (rand() % 500) + 500;
 				spriteBee.setPosition(OUT_SCREEN_X, height);
 				beeActive = true;
-
 			}
 			else
 				// Move the bee
 			{
-
 				spriteBee.setPosition(
 					spriteBee.getPosition().x -
 					(beeSpeed * dt.asSeconds()),
@@ -451,7 +402,6 @@ int main()
 					float height = (rand() % 150);
 					clouds[i].setPosition(-200, height);
 					cloudsActive[i] = true;
-
 				}
 				else
 				{
@@ -462,14 +412,12 @@ int main()
 						clouds[i].getPosition().y);
 
 					// Has the cloud reached the right hand edge of the screen?
-					if (clouds[i].getPosition().x > 1920)
+					if (clouds[i].getPosition().x > SCREEN_WIDTH)
 					{
 						// Set it up ready to be a whole new cloud next frame
 						cloudsActive[i] = false;
 					}
-
 				}
-
 			}
 			
 			// Draw the score and the frame rate once every 100 frames
@@ -478,19 +426,18 @@ int main()
 				// Update the score text
 				std::stringstream ss;
 				ss << "Score = " << score;
-				scoreText.setString(ss.str());
+				textboxScore.setText(ss.str());
 
 				// Draw the fps
 				std::stringstream ss2;
 				ss2 << "FPS = " << 1/dt.asSeconds();
-				fpsText.setString(ss2.str());
+				textboxFps.setText(ss2.str());
 				lastDrawn = 0;
 			}
 
 			// update the branch sprites
 			for (int i = 0; i < NUM_BRANCHES; i++)
 			{
-
 				float height = i * 150;
 
 				if (branchPositions[i] == side::LEFT)
@@ -513,7 +460,7 @@ int main()
 				else
 				{
 					// Hide the branch
-					branches[i].setPosition(3000, height);
+					branches[i].setPosition(OUT_SCREEN_X, height);
 				}
 			}
 
@@ -555,22 +502,11 @@ int main()
 				spriteLog.setPosition(OUT_SCREEN_X, 720);
 
 				// Change the text of the message
-				messageText.setString("SQUISHED!!");
-
-				// Center it on the screen
-				FloatRect textRect = messageText.getLocalBounds();
-
-				messageText.setOrigin(textRect.left +
-					textRect.width / 2.0f,
-					textRect.top + textRect.height / 2.0f);
-
-				messageText.setPosition(1920 / 2.0f,
-					1080 / 2.0f);
+				textboxPopup.setText("SQUISHED!!");
+				textboxPopup.hide(false);
 
 				// Play the death sound
 				//death.play();
-
-
 			}
 
 
@@ -588,24 +524,8 @@ int main()
 		// Draw our game scene here
 		_window.drawSprites();
 
-		// Draw backgrounds for the text
-		_window.draw(rect1);
-		_window.draw(rect2);
-
-		// Draw the score
-		_window.draw(scoreText);
-
-		// Draw the FPS
-		_window.draw(fpsText);
-
 		// Draw the timebar
 		_window.draw(timeBar);
-
-		if (paused)
-		{
-			// Draw our message
-			_window.draw(messageText);
-		}
 
 		// Show everything we just drew
 		_window.display();
