@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-class GfxSprite {
+class GfxSprite : public sf::Drawable {
 public:
 	GfxSprite();
 	GfxSprite(const std::string& imgFile);
@@ -22,11 +22,13 @@ public:
 	void setRotation(float angle);
 	const std::shared_ptr<sf::Texture> getTexture();
 	const sf::Vector2f& getPosition() const;
-	sf::Sprite & getSprite();
-	sf::Sprite _sprite;
+	void hide(bool isHide);
 private:
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	sf::Sprite _sprite;
 	// Create a texture to hold a graphic on the GPU
 	std::shared_ptr<sf::Texture> _ptrTexture;
+	bool _isHide = false;
 };
 
 #endif /* SRC_GFXSPRITE_H_ */

@@ -19,7 +19,6 @@ public:
 	GfxWindow();
 	GfxWindow(const std::string& title, unsigned int modeWidth, unsigned int modeHeight, unsigned int modeBitsPerPixel = 32);
 	virtual ~GfxWindow();
-	void addSprite(GfxSprite& sprite);
 	void addSprite(sf::Drawable* drawable);
 	void drawSprites(void);
 	bool isOpen() const;

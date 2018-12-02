@@ -57,7 +57,15 @@ const sf::Vector2f& GfxSprite::getPosition() const
 	return _sprite.getPosition();
 }
 
-sf::Sprite & GfxSprite::getSprite()
+void GfxSprite::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	return _sprite;
+	if(_isHide == false)
+	{
+		target.draw(_sprite, states);
+	}
+}
+
+void GfxSprite::hide(bool isHide)
+{
+	_isHide = isHide;
 }

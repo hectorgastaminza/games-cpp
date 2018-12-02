@@ -29,11 +29,6 @@ GfxWindow::GfxWindow(const std::string& title,
 GfxWindow::~GfxWindow() {
 }
 
-void GfxWindow::addSprite(GfxSprite& sprite)
-{
-	addSprite(&sprite._sprite);
-}
-
 void GfxWindow::addSprite(sf::Drawable * drawable)
 {
 	_drawables.push_back(drawable);

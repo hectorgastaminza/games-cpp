@@ -23,9 +23,10 @@ side branchPositions[NUM_BRANCHES];
 // Line the axe up with the tree
 const float AXE_POSITION_LEFT = 850;
 const float AXE_POSITION_RIGHT = 1075;
+const float AXE_POSITION_Y = 830;
+const float RIP_POSITION_Y = 750;
 const float SCREEN_WIDTH = 1920;
 const float SCREEN_HEIGHT = 1080;
-const float OUT_SCREEN_X = 2200;
 const float INFO_POS_Y = SCREEN_HEIGHT - 120;
 const float FPS_WIDTH = 300;
 const float FPS_HEIGHT = 50;
@@ -40,34 +41,34 @@ int main()
 	// Create background
 	GfxSprite spriteBackground("resources/graphics/background.png");
 	spriteBackground.setPosition(0,0);
-	_window.addSprite(spriteBackground);
+	_window.addSprite(&spriteBackground);
 
 	// Make a tree sprite
 	GfxSprite spriteTree("resources/graphics/tree.png");
 	spriteTree.setPosition(810, 0);
-	_window.addSprite(spriteTree);
+	_window.addSprite(&spriteTree);
 
 	// Background trees
 	GfxSprite spriteTree2("resources/graphics/tree2.png");
 	spriteTree2.setPosition(20, 0);
-	_window.addSprite(spriteTree2);
+	_window.addSprite(&spriteTree2);
 	GfxSprite spriteTree3(spriteTree2.getTexture());
 	spriteTree3.setPosition(300, -400);
-	_window.addSprite(spriteTree3);
+	_window.addSprite(&spriteTree3);
 	GfxSprite spriteTree4(spriteTree2.getTexture());
 	spriteTree4.setPosition(1300, -400);
-	_window.addSprite(spriteTree4);
+	_window.addSprite(&spriteTree4);
 	GfxSprite spriteTree5(spriteTree2.getTexture());
 	spriteTree5.setPosition(1500, -500);
-	_window.addSprite(spriteTree5);
+	_window.addSprite(&spriteTree5);
 	GfxSprite spriteTree6(spriteTree2.getTexture());
 	spriteTree6.setPosition(1900, 0);
-	_window.addSprite(spriteTree6);
+	_window.addSprite(&spriteTree6);
 
 	// Prepare the bee
 	GfxSprite spriteBee("resources/graphics/bee.png");
-	spriteBee.setPosition(20, 0);
-	_window.addSprite(spriteBee);
+	spriteBee.hide(true);
+	_window.addSprite(&spriteBee);
 
 	// Background clouds
 	GfxSprite clouds[NUM_CLOUDS];
@@ -84,7 +85,7 @@ int main()
 		clouds[i].setPosition(-300, i * 150);
 		cloudsActive[i] = false;
 		cloudSpeeds[i] = 0;
-		_window.addSprite(clouds[i]);
+		_window.addSprite(&clouds[i]);
 	}
 
 	// Prepare 5 branches
@@ -95,32 +96,32 @@ int main()
 	for (int i = 0; i < NUM_BRANCHES; i++)
 	{
 		branches[i] = GfxSprite(_branchTexture);
-		branches[i].setPosition(-OUT_SCREEN_X, -OUT_SCREEN_X);
+		branches[i].hide(true);
 		// Set the sprite's origin to dead center
 		// We can then spin it round without changing its position
 		branches[i].setOrigin(220, 20);
-		_window.addSprite(branches[i]);
+		_window.addSprite(&branches[i]);
 	}
 
 	// Prepare the player
 	GfxSprite spritePlayer("resources/graphics/player.png");
-	spritePlayer.setPosition(OUT_SCREEN_X, 720);
-	_window.addSprite(spritePlayer);
+	spritePlayer.hide(true);
+	_window.addSprite(&spritePlayer);
 
 	// Prepare the axe
 	GfxSprite spriteAxe("resources/graphics/axe.png");
-	spriteAxe.setPosition(OUT_SCREEN_X, 830);
-	_window.addSprite(spriteAxe);
+	spriteAxe.hide(true);
+	_window.addSprite(&spriteAxe);
 
 	// Prepare the gravestone
 	GfxSprite spriteRIP("resources/graphics/rip.png");
-	spriteRIP.setPosition(OUT_SCREEN_X, 750);
-	_window.addSprite(spriteRIP);
+	spriteRIP.hide(true);
+	_window.addSprite(&spriteRIP);
 
 	// Prepare the flying log
 	GfxSprite spriteLog("resources/graphics/log.png");
-	spriteLog.setPosition(OUT_SCREEN_X, 720);
-	_window.addSprite(spriteLog);
+	spriteLog.hide(true);
+	_window.addSprite(&spriteLog);
 
 	// Prepare FPS information
 	GfxTextbox textboxFps(sf::Vector2f(FPS_WIDTH,FPS_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 20);
@@ -139,12 +140,10 @@ int main()
 	// Prepare Game Information popup
 	GfxTextbox textboxPopup(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 140);
 	textboxPopup.setForeColor(sf::Color::Cyan);
-	textboxPopup.setBackColor(sf::Color(0, 0, 0, 150));
 	textboxPopup.setPosition(0, 0);
 	textboxPopup.enableBackground(false);
 	textboxPopup.hide(true);
 	_window.addSprite(&textboxPopup);
-
 
 	// The player starts on the left
 	side playerSide = side::LEFT;
@@ -154,8 +153,6 @@ int main()
 
 	// How fast can the bee fly
 	float beeSpeed = 0.0f;
-
-
 	
 	// Variables to control time itself
 	Clock clock;
@@ -216,16 +213,13 @@ int main()
 				acceptInput = true;
 
 				// hide the axe
-				spriteAxe.setPosition(OUT_SCREEN_X, spriteAxe.getPosition().y);
-				spriteAxe.setRotation(0);
+				spriteAxe.hide(true);
 			}
 		}
 
-		/*
-		****************************************
-		Handle the players input
-		****************************************
-		*/
+		/* ****************************************
+			Handle the players input
+		**************************************** */
 
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
@@ -251,10 +245,11 @@ int main()
 			}
 
 			// Make sure the gravestone is hidden
-			spriteRIP.setPosition(OUT_SCREEN_X, spriteRIP.getPosition().y);
+			spriteRIP.hide(true);
 
 			// Move the player into position
 			spritePlayer.setPosition(580, 720);
+			spritePlayer.hide(false);
 
 			acceptInput = true;
 		}
@@ -275,17 +270,19 @@ int main()
 				// Add to the amount of time remaining
 				timeRemaining += (2 / score) + .15;
 
-				spriteAxe.setPosition(AXE_POSITION_RIGHT,
-					spriteAxe.getPosition().y);
+				spriteAxe.setPosition(AXE_POSITION_RIGHT, AXE_POSITION_Y);
 				spriteAxe.setRotation(0);
+				spriteAxe.hide(false);
 
 				spritePlayer.setPosition(1200, 720);
+				spritePlayer.hide(false);
 
 				// update the branches
 				updateBranches(score);
 
 				// set the log flying to the left
 				spriteLog.setPosition(810, 720);
+				spriteLog.hide(false);
 				logSpeedX = -5000;
 				logActive = true;
 
@@ -306,20 +303,21 @@ int main()
 				// Add to the amount of time remaining
 				timeRemaining += (2 / score) + .15;
 
-				spriteAxe.setPosition(AXE_POSITION_LEFT,
-					spriteAxe.getPosition().y);
+				spriteAxe.setPosition(AXE_POSITION_LEFT, AXE_POSITION_Y);
 				spriteAxe.setRotation(180);
+				spriteAxe.hide(false);
 
 				spritePlayer.setPosition(580, 720);
+				spritePlayer.hide(false);
 
 				// update the branches
 				updateBranches(score);
 
 				// set the log flying
 				spriteLog.setPosition(810, 720);
+				spriteLog.hide(false);
 				logSpeedX = 5000;
 				logActive = true;
-
 
 				acceptInput = false;
 
@@ -369,12 +367,14 @@ int main()
 				// How high is the bee
 				srand((int)time(0) * 10);
 				float height = (rand() % 500) + 500;
-				spriteBee.setPosition(OUT_SCREEN_X, height);
+				spriteBee.setPosition(SCREEN_WIDTH, height);
+				spriteBee.hide(true);
 				beeActive = true;
 			}
 			else
 				// Move the bee
 			{
+				spriteBee.hide(false);
 				spriteBee.setPosition(
 					spriteBee.getPosition().x -
 					(beeSpeed * dt.asSeconds()),
@@ -439,6 +439,7 @@ int main()
 			for (int i = 0; i < NUM_BRANCHES; i++)
 			{
 				float height = i * 150;
+				branches[i].hide(false);
 
 				if (branchPositions[i] == side::LEFT)
 				{
@@ -460,7 +461,7 @@ int main()
 				else
 				{
 					// Hide the branch
-					branches[i].setPosition(OUT_SCREEN_X, height);
+					branches[i].hide(true);
 				}
 			}
 
@@ -473,11 +474,11 @@ int main()
 
 				// Has the insect reached the right hand edge of the screen?
 				if (spriteLog.getPosition().x < -100 ||
-					spriteLog.getPosition().x > OUT_SCREEN_X)
+					spriteLog.getPosition().x > SCREEN_WIDTH)
 				{
 					// Set it up ready to be a whole new cloud next frame
 					logActive = false;
-					spriteLog.setPosition(OUT_SCREEN_X, 720);
+					spriteLog.hide(true);
 				}
 			}
 
@@ -489,17 +490,17 @@ int main()
 				acceptInput = false;
 
 				// Draw the gravestone
-				spriteRIP.setPosition(spritePlayer.getPosition().x, spriteRIP.getPosition().y);
+				spriteRIP.setPosition(spritePlayer.getPosition().x, RIP_POSITION_Y);
+				spriteRIP.hide(false);
 
 				// hide the player
-				spritePlayer.setPosition(OUT_SCREEN_X, spritePlayer.getPosition().y);
+				spritePlayer.hide(true);
 
 				// hide the axe
-				spriteAxe.setPosition(OUT_SCREEN_X, spriteAxe.getPosition().y);
-				spriteAxe.setRotation(0);
+				spriteAxe.hide(true);
 
 				// hide log
-				spriteLog.setPosition(OUT_SCREEN_X, 720);
+				spriteLog.hide(true);
 
 				// Change the text of the message
 				textboxPopup.setText("SQUISHED!!");
