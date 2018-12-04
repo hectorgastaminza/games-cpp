@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "GfxSprite.h"
+#include "GfxSpriteSliding.h"
 #include "GfxWindow.h"
 #include "GfxTextbox.h"
 
@@ -43,6 +44,27 @@ int main()
 	spriteBackground.setPosition(0,0);
 	_window.addSprite(&spriteBackground);
 
+	// Prepare the bee
+	GfxSpriteSliding spriteBee("resources/graphics/bee.png");
+	spriteBee.configureSlide(slidingDirection::SLIDE_LEFT, SCREEN_WIDTH, SCREEN_HEIGHT-500, SCREEN_HEIGHT-300, 10);
+	spriteBee.hide(true);
+	_window.addSprite(&spriteBee);
+
+	// Background clouds
+	std::list<std::shared_ptr<GfxSpriteSliding>> clouds;
+	// Load a graphic into the texture
+	auto _cloudTexture = std::make_shared<sf::Texture>();
+	_cloudTexture->loadFromFile("resources/graphics/cloud.png");
+	// Create clouds
+	for (int idx = 0 ; idx < NUM_CLOUDS ; idx++)
+	{
+		clouds.emplace_back(std::make_shared<GfxSpriteSliding>(_cloudTexture));
+		auto ptr = clouds.back();
+		ptr->configureSlide(slidingDirection::SLIDE_RIGHT, SCREEN_WIDTH, 0, 300, 10);
+		ptr->hide(true);
+		_window.addSprite(ptr.get());
+	}
+
 	// Make a tree sprite
 	GfxSprite spriteTree("resources/graphics/tree.png");
 	spriteTree.setPosition(810, 0);
@@ -65,29 +87,6 @@ int main()
 	spriteTree6.setPosition(1900, 0);
 	_window.addSprite(&spriteTree6);
 
-	// Prepare the bee
-	GfxSprite spriteBee("resources/graphics/bee.png");
-	spriteBee.hide(true);
-	_window.addSprite(&spriteBee);
-
-	// Background clouds
-	GfxSprite clouds[NUM_CLOUDS];
-	int cloudSpeeds[NUM_CLOUDS];
-	bool cloudsActive[NUM_CLOUDS];
-
-	auto _cloudTexture = std::make_shared<sf::Texture>();
-	// Load a graphic into the texture
-	_cloudTexture->loadFromFile("resources/graphics/cloud.png");
-
-	for (int i = 1; i < NUM_CLOUDS; i++)
-	{
-		clouds[i] = GfxSprite(_cloudTexture);
-		clouds[i].setPosition(-300, i * 150);
-		cloudsActive[i] = false;
-		cloudSpeeds[i] = 0;
-		_window.addSprite(&clouds[i]);
-	}
-
 	// Prepare 5 branches
 	// Set the texture for each branch sprite
 	auto _branchTexture = std::make_shared<sf::Texture>();
@@ -103,6 +102,11 @@ int main()
 		_window.addSprite(&branches[i]);
 	}
 
+	// Prepare the flying log
+	GfxSprite spriteLog("resources/graphics/log.png");
+	spriteLog.hide(true);
+	_window.addSprite(&spriteLog);
+
 	// Prepare the player
 	GfxSprite spritePlayer("resources/graphics/player.png");
 	spritePlayer.hide(true);
@@ -117,11 +121,6 @@ int main()
 	GfxSprite spriteRIP("resources/graphics/rip.png");
 	spriteRIP.hide(true);
 	_window.addSprite(&spriteRIP);
-
-	// Prepare the flying log
-	GfxSprite spriteLog("resources/graphics/log.png");
-	spriteLog.hide(true);
-	_window.addSprite(&spriteLog);
 
 	// Prepare FPS information
 	GfxTextbox textboxFps(sf::Vector2f(FPS_WIDTH,FPS_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 20);
@@ -145,14 +144,11 @@ int main()
 	textboxPopup.hide(true);
 	_window.addSprite(&textboxPopup);
 
+
+
+
 	// The player starts on the left
 	side playerSide = side::LEFT;
-
-	// Is the bee currently moving?
-	bool beeActive = false;
-
-	// How fast can the bee fly
-	float beeSpeed = 0.0f;
 	
 	// Variables to control time itself
 	Clock clock;
@@ -356,70 +352,15 @@ int main()
 				//outOfTime.play();
 			}
 
-
-			// Setup the bee
-			if (!beeActive)
-			{
-				// How fast is the bee
-				srand((int)time(0) * 10);
-				beeSpeed = (rand() % 200) + 200;
-
-				// How high is the bee
-				srand((int)time(0) * 10);
-				float height = (rand() % 500) + 500;
-				spriteBee.setPosition(SCREEN_WIDTH, height);
-				spriteBee.hide(true);
-				beeActive = true;
-			}
-			else
-				// Move the bee
-			{
-				spriteBee.hide(false);
-				spriteBee.setPosition(
-					spriteBee.getPosition().x -
-					(beeSpeed * dt.asSeconds()),
-					spriteBee.getPosition().y);
-
-				// Has the bee reached the right hand edge of the screen?
-				if (spriteBee.getPosition().x < -100)
-				{
-					// Set it up ready to be a whole new cloud next frame
-					beeActive = false;
-				}
-			}
+			// Move the bee
+			spriteBee.slide(dt.asSeconds());
 
 			// Manage the clouds with arrays
-			for (int i = 0; i < NUM_CLOUDS; i++)
+			for (auto it : clouds)
 			{
-				if (!cloudsActive[i])
-				{
-					// How fast is the cloud
-					srand((int)time(0) * i);
-					cloudSpeeds[i] = (rand() % 200);
-
-					// How high is the cloud
-					srand((int)time(0) * i);
-					float height = (rand() % 150);
-					clouds[i].setPosition(-200, height);
-					cloudsActive[i] = true;
-				}
-				else
-				{
-					// Set the new position
-					clouds[i].setPosition(
-						clouds[i].getPosition().x +
-						(cloudSpeeds[i] * dt.asSeconds()),
-						clouds[i].getPosition().y);
-
-					// Has the cloud reached the right hand edge of the screen?
-					if (clouds[i].getPosition().x > SCREEN_WIDTH)
-					{
-						// Set it up ready to be a whole new cloud next frame
-						cloudsActive[i] = false;
-					}
-				}
+				it->slide(dt.asSeconds());
 			}
-			
+
 			// Draw the score and the frame rate once every 100 frames
 			lastDrawn++;
 			if (lastDrawn == 100) {
