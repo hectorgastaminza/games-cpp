@@ -6,6 +6,7 @@
 #include "GfxSpriteSliding.h"
 #include "GfxWindow.h"
 #include "GfxTextbox.h"
+#include "GfxBar.h"
 
 // Make code easier to type with "using namespace"
 using namespace sf;
@@ -127,6 +128,7 @@ int main()
 	textboxFps.setForeColor(sf::Color::Magenta);
 	textboxFps.setBackColor(sf::Color(0, 0, 0, 150));
 	textboxFps.setPosition(SCREEN_WIDTH - FPS_WIDTH - 50, INFO_POS_Y);
+	textboxFps.hide(true);
 	_window.addSprite(&textboxFps);
 
 	// Prepare Score Information
@@ -134,7 +136,17 @@ int main()
 	textboxScore.setForeColor(sf::Color::Yellow);
 	textboxScore.setBackColor(sf::Color(0, 0, 0, 150));
 	textboxScore.setPosition(50, INFO_POS_Y);
+	textboxScore.hide(true);
 	_window.addSprite(&textboxScore);
+
+	// Time bar
+	const float maxTime = 6.0f;
+	GfxBar timeBar(maxTime, maxTime, 400, 80);
+	timeBar.setPosition((SCREEN_WIDTH / 2) - 400 / 2, INFO_POS_Y);
+	timeBar.setForeColor(Color::Red);
+	timeBar.setBackColor(sf::Color(Color::Red.r, Color::Red.g, Color::Red.b, 150));
+	timeBar.hide(true);
+	_window.addSprite(&timeBar);
 
 	// Prepare Game Information popup
 	GfxTextbox textboxPopup(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT), "resources/fonts/KOMIKAP_.ttf", 140);
@@ -146,23 +158,13 @@ int main()
 
 
 
-
 	// The player starts on the left
 	side playerSide = side::LEFT;
 	
 	// Variables to control time itself
 	Clock clock;
-	// Time bar
-	RectangleShape timeBar;
-	float timeBarStartWidth = 400;
-	float timeBarHeight = 80;
-	timeBar.setSize(Vector2f(timeBarStartWidth, timeBarHeight));
-	timeBar.setFillColor(Color::Red);
-	timeBar.setPosition((SCREEN_WIDTH / 2) - timeBarStartWidth / 2, INFO_POS_Y);
 
 	Time gameTimeTotal;
-	float timeRemaining = 6.0f;
-	float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
 
 	// Track whether the game is running
 	bool paused = true;
@@ -226,13 +228,14 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Return))
 		{
 			paused = false;
-
-			// hide popup message
-			textboxPopup.hide(true);
+			acceptInput = true;
 
 			// Reset the time and the score
 			score = 0;
-			timeRemaining = 6;
+			timeBar.setValue(maxTime);
+
+			// hide popup message
+			textboxPopup.hide(true);
 
 			// Make all the branches disappear
 			for (int i = 1; i < NUM_BRANCHES; i++)
@@ -247,7 +250,9 @@ int main()
 			spritePlayer.setPosition(580, 720);
 			spritePlayer.hide(false);
 
-			acceptInput = true;
+			textboxScore.hide(false);
+			textboxFps.hide(false);
+			timeBar.hide(false);
 		}
 
 		// Wrap the player controls to
@@ -258,13 +263,14 @@ int main()
 			// First handle pressing the right cursor key
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
+				acceptInput = false;
+
 				// Make sure the player is on the right
 				playerSide = side::RIGHT;
 
 				score++;
-
 				// Add to the amount of time remaining
-				timeRemaining += (2 / score) + .15;
+				timeBar.addValue((2 / score) + .15);
 
 				spriteAxe.setPosition(AXE_POSITION_RIGHT, AXE_POSITION_Y);
 				spriteAxe.setRotation(0);
@@ -282,8 +288,6 @@ int main()
 				logSpeedX = -5000;
 				logActive = true;
 
-				acceptInput = false;
-
 				// Play a chop sound
 				//chop.play();
 			}
@@ -291,13 +295,14 @@ int main()
 			// Handle the left cursor key
 			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
+				acceptInput = false;
+
 				// Make sure the player is on the left
 				playerSide = side::LEFT;
 
 				score++;
-
 				// Add to the amount of time remaining
-				timeRemaining += (2 / score) + .15;
+				timeBar.addValue((2 / score) + .15);
 
 				spriteAxe.setPosition(AXE_POSITION_LEFT, AXE_POSITION_Y);
 				spriteAxe.setRotation(180);
@@ -314,8 +319,6 @@ int main()
 				spriteLog.hide(false);
 				logSpeedX = 5000;
 				logActive = true;
-
-				acceptInput = false;
 
 				// Play a chop sound
 				//chop.play();
@@ -334,12 +337,9 @@ int main()
 			Time dt = clock.restart();
 
 			// Subtract from the amount of time remaining
-			timeRemaining -= dt.asSeconds();
-			// size up the time bar
-			timeBar.setSize(Vector2f(timeBarWidthPerSecond *
-				timeRemaining, timeBarHeight));
+			timeBar.addValue((dt.asSeconds() * -1.0));
 
-			if (timeRemaining <= 0.0f) {
+			if (timeBar.getValue() <= 0.0f) {
 
 				// Pause the game
 				paused = true;
@@ -466,9 +466,6 @@ int main()
 		// Draw our game scene here
 		_window.drawSprites();
 
-		// Draw the timebar
-		_window.draw(timeBar);
-
 		// Show everything we just drew
 		_window.display();
 	}
@@ -502,8 +499,6 @@ void updateBranches(int seed)
 		branchPositions[0] = side::NONE;
 		break;
 	}
-
-
 }
 
 
