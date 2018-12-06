@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Pickup.h"
 #include "TextureHolder.h"
 
@@ -11,7 +10,7 @@ Pickup::Pickup(int type)
 	if (m_Type == 1)
 	{
 		m_Sprite = Sprite(TextureHolder::GetTexture(
-			"graphics/health_pickup.png"));
+			"resources/graphics/health_pickup.png"));
 
 		// How much is pickup worth
 		m_Value = HEALTH_START_VALUE;
@@ -20,7 +19,7 @@ Pickup::Pickup(int type)
 	else
 	{
 		m_Sprite = Sprite(TextureHolder::GetTexture(
-			"graphics/ammo_pickup.png"));
+			"resources/graphics/ammo_pickup.png"));
 
 		// How much is pickup worth
 		m_Value = AMMO_START_VALUE;

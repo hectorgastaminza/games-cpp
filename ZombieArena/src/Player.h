@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SRC_PLAYER_H_
+#define SRC_PLAYER_H_
+
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
@@ -106,10 +108,6 @@ public:
 
 	// Increase the maximum amount of health the player can have
 	void increaseHealthLevel(int amount);
-
-
 };
 
-
-
-#pragma once
+#endif  /* SRC_PLAYER_H_ */

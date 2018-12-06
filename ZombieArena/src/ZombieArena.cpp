@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <sstream>
 #include <fstream>
 #include <SFML/Graphics.hpp>
@@ -53,11 +52,11 @@ int main()
 	VertexArray background;
 	// Load the texture for our background vertex array
 	Texture textureBackground = TextureHolder::GetTexture(
-		"graphics/background_sheet.png");
+		"resources/graphics/background_sheet.png");
 
 	// Prepare for a horde of zombies
-	int numZombies;
-	int numZombiesAlive;
+	int numZombies = 0;
+	int numZombiesAlive = 0;
 	Zombie* zombies = NULL;
 
 	// 100 bullets should do
@@ -73,7 +72,7 @@ int main()
 	// Hide the mouse pointer and replace it with crosshair
 	window.setMouseCursorVisible(true);
 	Sprite spriteCrosshair;
-	Texture textureCrosshair = TextureHolder::GetTexture("graphics/crosshair.png");
+	Texture textureCrosshair = TextureHolder::GetTexture("resources/graphics/crosshair.png");
 	spriteCrosshair.setTexture(textureCrosshair);
 	spriteCrosshair.setOrigin(25, 25);
 
@@ -87,7 +86,7 @@ int main()
 
 	// For the home/game over screen
 	Sprite spriteGameOver;
-	Texture textureGameOver = TextureHolder::GetTexture("graphics/background.png");
+	Texture textureGameOver = TextureHolder::GetTexture("resources/graphics/background.png");
 	spriteGameOver.setTexture(textureGameOver);
 	spriteGameOver.setPosition(0, 0);
 
@@ -96,13 +95,13 @@ int main()
 
 	// Create a sprite for the ammo icon
 	Sprite spriteAmmoIcon;
-	Texture textureAmmoIcon = TextureHolder::GetTexture("graphics/ammo_icon.png");
+	Texture textureAmmoIcon = TextureHolder::GetTexture("resources/graphics/ammo_icon.png");
 	spriteAmmoIcon.setTexture(textureAmmoIcon);
 	spriteAmmoIcon.setPosition(20, 980);
 
 	// Load the font
 	Font font;
-	font.loadFromFile("fonts/zombiecontrol.ttf");
+	font.loadFromFile("resources/fonts/zombiecontrol.ttf");
 
 	// Paused
 	Text pausedText;
@@ -199,43 +198,43 @@ int main()
 
 	// Prepare the hit sound
 	SoundBuffer hitBuffer;
-	hitBuffer.loadFromFile("sound/hit.wav");
+	hitBuffer.loadFromFile("resources/sound/hit.wav");
 	Sound hit;
 	hit.setBuffer(hitBuffer);
 
 	// Prepare the splat sound
 	SoundBuffer splatBuffer;
-	splatBuffer.loadFromFile("sound/splat.wav");
+	splatBuffer.loadFromFile("resources/sound/splat.wav");
 	sf::Sound splat;
 	splat.setBuffer(splatBuffer);
 
 	// Prepare the shoot sound
 	SoundBuffer shootBuffer;
-	shootBuffer.loadFromFile("sound/shoot.wav");
+	shootBuffer.loadFromFile("resources/sound/shoot.wav");
 	Sound shoot;
 	shoot.setBuffer(shootBuffer);
 
 	// Prepare the reload sound
 	SoundBuffer reloadBuffer;
-	reloadBuffer.loadFromFile("sound/reload.wav");
+	reloadBuffer.loadFromFile("resources/sound/reload.wav");
 	Sound reload;
 	reload.setBuffer(reloadBuffer);
 
 	// Prepare the failed sound
 	SoundBuffer reloadFailedBuffer;
-	reloadFailedBuffer.loadFromFile("sound/reload_failed.wav");
+	reloadFailedBuffer.loadFromFile("resources/sound/reload_failed.wav");
 	Sound reloadFailed;
 	reloadFailed.setBuffer(reloadFailedBuffer);
 
 	// Prepare the powerup sound
 	SoundBuffer powerupBuffer;
-	powerupBuffer.loadFromFile("sound/powerup.wav");
+	powerupBuffer.loadFromFile("resources/sound/powerup.wav");
 	Sound powerup;
 	powerup.setBuffer(powerupBuffer);
 
 	// Prepare the pickup sound
 	SoundBuffer pickupBuffer;
-	pickupBuffer.loadFromFile("sound/pickup.wav");
+	pickupBuffer.loadFromFile("resources/sound/pickup.wav");
 	Sound pickup;
 	pickup.setBuffer(pickupBuffer);
 
@@ -613,7 +612,7 @@ int main()
 					{
 						state = State::GAME_OVER;
 
-						std::ofstream outputFile("gamedata/scores.txt");
+						std::ofstream outputFile("resources/gamedata/scores.txt");
 						outputFile << hiScore;
 						outputFile.close();
 						

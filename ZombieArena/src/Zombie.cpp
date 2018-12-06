@@ -1,8 +1,8 @@
-#include "stdafx.h"
 #include "zombie.h"
 #include "TextureHolder.h"
 #include <cstdlib>
 #include <ctime>
+#include <math.h>       /* atan2 */
 
 using namespace std;
 
@@ -15,7 +15,7 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
 	case 0:
 		// Bloater
 		m_Sprite = Sprite(TextureHolder::GetTexture(
-			"graphics/bloater.png"));
+			"resources/graphics/bloater.png"));
 
 		m_Speed = 40;
 		m_Health = 5;
@@ -24,7 +24,7 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
 	case 1:
 		// Chaser
 		m_Sprite = Sprite(TextureHolder::GetTexture(
-			"graphics/chaser.png"));
+			"resources/graphics/chaser.png"));
 
 		m_Speed = 70;
 		m_Health = 1;
@@ -33,7 +33,7 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
 	case 2:
 		// Crawler
 		m_Sprite = Sprite(TextureHolder::GetTexture(
-			"graphics/crawler.png"));
+			"resources/graphics/crawler.png"));
 
 		m_Speed = 20;
 		m_Health = 3;
@@ -65,7 +65,7 @@ bool Zombie::hit()
 		// dead
 		m_Alive = false;
 		m_Sprite.setTexture(TextureHolder::GetTexture(
-			"graphics/blood.png"));
+			"resources/graphics/blood.png"));
 
 		return true;
 	}
@@ -125,7 +125,7 @@ void Zombie::update(float elapsedTime,
 	m_Sprite.setPosition(m_Position);
 
 	// Face the sprite in the correct direction
-	float angle = (atan2(playerY - m_Position.y,
+	float angle = (std::atan2(playerY - m_Position.y,
 		playerX - m_Position.x)
 		* 180) / 3.141;
 

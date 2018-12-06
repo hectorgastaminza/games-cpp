@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SRC_ZOMBIE_H_
+#define SRC_ZOMBIE_H_
+
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
@@ -57,4 +59,4 @@ public:
 	void update(float elapsedTime, Vector2f playerLocation);
 };
 
-
+#endif

@@ -1,6 +1,6 @@
-#include "stdafx.h"
 #include "player.h"
 #include "TextureHolder.h"
+#include <math.h>       /* atan2 */
 
 Player::Player()
 {
@@ -11,7 +11,7 @@ Player::Player()
 	// Associate a texture with the sprite
 	// !!Watch this space!!
 	m_Sprite = Sprite(TextureHolder::GetTexture(
-		"graphics/player.png"));
+		"resources/graphics/player.png"));
 
 	// Set the origin of the sprite to the centre, 
 	// for smooth rotation
@@ -180,8 +180,7 @@ void Player::update(float elapsedTime, Vector2i mousePosition)
 	}
 
 	// Calculate the angle the player is facing
-	float angle = (atan2(mousePosition.y - m_Resolution.y / 2,
-		mousePosition.x - m_Resolution.x / 2)
+	float angle = (std::atan2((mousePosition.y - (m_Resolution.y / 2)), (mousePosition.x - (m_Resolution.x / 2)))
 		* 180) / 3.141;
 
 	m_Sprite.setRotation(angle);

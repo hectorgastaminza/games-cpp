@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TextureHolder.h"
 #include <assert.h>
 
