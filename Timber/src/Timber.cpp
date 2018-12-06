@@ -247,6 +247,7 @@ int main()
 			spriteRIP.hide(true);
 
 			// Move the player into position
+			playerSide = side::LEFT;
 			spritePlayer.setPosition(580, 720);
 			spritePlayer.hide(false);
 
@@ -264,11 +265,8 @@ int main()
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
 				acceptInput = false;
-
-				// Make sure the player is on the right
-				playerSide = side::RIGHT;
-
 				score++;
+
 				// Add to the amount of time remaining
 				timeBar.addValue((2 / score) + .15);
 
@@ -276,6 +274,8 @@ int main()
 				spriteAxe.setRotation(0);
 				spriteAxe.hide(false);
 
+				// Make sure the player is on the right
+				playerSide = side::RIGHT;
 				spritePlayer.setPosition(1200, 720);
 				spritePlayer.hide(false);
 
@@ -297,9 +297,6 @@ int main()
 			{
 				acceptInput = false;
 
-				// Make sure the player is on the left
-				playerSide = side::LEFT;
-
 				score++;
 				// Add to the amount of time remaining
 				timeBar.addValue((2 / score) + .15);
@@ -308,6 +305,8 @@ int main()
 				spriteAxe.setRotation(180);
 				spriteAxe.hide(false);
 
+				// Make sure the player is on the left
+				playerSide = side::LEFT;
 				spritePlayer.setPosition(580, 720);
 				spritePlayer.hide(false);
 
